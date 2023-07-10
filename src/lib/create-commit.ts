@@ -12,7 +12,7 @@ export default async function createCommit(tools: Toolkit) {
     tools.log.info(`file: ${ file_path }`)
     main.push({
       path: file_path,
-      mode: '100644',
+      mode: '100755',
       type: 'blob',
       content: await readFile(tools.workspace, file_path)
     })
@@ -24,7 +24,7 @@ export default async function createCommit(tools: Toolkit) {
     tree: [
       {
         path: 'action.yml',
-        mode: '100644',
+        mode: '100755',
         type: 'blob',
         content: await readFile(tools.workspace, 'action.yml')
       },
