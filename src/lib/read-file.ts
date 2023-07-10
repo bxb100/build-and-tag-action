@@ -10,3 +10,9 @@ export default async function readFile(baseDir: string, file: string) {
 
   return fs.promises.readFile(pathToFile, 'utf8')
 }
+
+export async function readDir(baseDir: string, dir: string) {
+  const pathToDir = path.join(baseDir, dir)
+
+  return fs.promises.readdir(pathToDir)
+}

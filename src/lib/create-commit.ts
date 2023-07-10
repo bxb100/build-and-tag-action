@@ -1,11 +1,19 @@
 import { Toolkit } from 'actions-toolkit'
-import readFile from './read-file'
+import readFile, { readDir } from './read-file'
 
 export default async function createCommit(tools: Toolkit) {
-  const { main } = tools.getPackageJSON<{ main?: string }>()
 
-  if (!main) {
-    throw new Error('Property "main" does not exist in your `package.json`.')
+  const dist_dir = await readDir(tools.workspace, 'dist')
+
+  let main = []
+  for (const file of dist_dir) {
+    tools.log.info(`file: ${ file }`)
+    main.push({
+      path: file,
+      mode: '100644',
+      type: 'blob',
+      content: await readFile(tools.workspace, file)
+    })
   }
 
   tools.log.info('Creating tree')
@@ -18,12 +26,8 @@ export default async function createCommit(tools: Toolkit) {
         type: 'blob',
         content: await readFile(tools.workspace, 'action.yml')
       },
-      {
-        path: main,
-        mode: '100644',
-        type: 'blob',
-        content: await readFile(tools.workspace, main)
-      }
+      // @ts-ignore
+      ...main
     ]
   })
 
