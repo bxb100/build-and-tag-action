@@ -1,5 +1,4 @@
 import { Toolkit } from 'actions-toolkit'
-import semver from 'semver'
 import createOrUpdateRef from './create-or-update-ref'
 import createCommit from './create-commit'
 import updateTag from './update-tag'
@@ -16,22 +15,5 @@ export default async function buildAndTagAction(tools: Toolkit) {
   // Update the tag to point to the new commit
   await updateTag(tools, commit.sha, tagName)
 
-  // Also update the major version tag.
-  // For example, for version v1.0.0, we'd also update v1.
-  let shouldRewriteMajorAndMinorRef = true
-
-  // If this is a release event, only update the major ref for a full release.
-  if (tools.context.event === 'release') {
-    const { draft, prerelease } = tools.context.payload.release
-    if (draft || prerelease) {
-      shouldRewriteMajorAndMinorRef = false
-    }
-  }
-
-  if (shouldRewriteMajorAndMinorRef) {
-    const majorStr = semver.major(tagName).toString()
-    const minorStr = semver.minor(tagName).toString()
-    await createOrUpdateRef(tools, commit.sha, `${majorStr}.${minorStr}`)
-    return createOrUpdateRef(tools, commit.sha, majorStr)
-  }
+  return createOrUpdateRef(tools, commit.sha, tagName)
 }
