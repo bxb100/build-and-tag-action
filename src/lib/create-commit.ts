@@ -1,5 +1,6 @@
 import { Toolkit } from 'actions-toolkit'
 import readFile, { readDir } from './read-file'
+import path from "path";
 
 export default async function createCommit(tools: Toolkit) {
 
@@ -7,12 +8,13 @@ export default async function createCommit(tools: Toolkit) {
 
   let main = []
   for (const file of dist_dir) {
-    tools.log.info(`file: ${ file }`)
+    const file_path = path.join('dist', file)
+    tools.log.info(`file: ${ file_path }`)
     main.push({
-      path: file,
+      path: file_path,
       mode: '100644',
       type: 'blob',
-      content: await readFile(tools.workspace, file)
+      content: await readFile(tools.workspace, file_path)
     })
   }
 
